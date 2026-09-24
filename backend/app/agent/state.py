@@ -1,27 +1,20 @@
-"""LangChain and LangGraph agent state definitions."""
-
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from dataclasses import dataclass, field
+from typing import Any
 
 
-class DisruptionEvent(BaseModel):
-    """Event model representing detected travel disruptions."""
+@dataclass
+class AgentState:
+    traveler_id: str | None = None
+    trip_id: str | None = None
 
-    event_id: str
-    event_type: str  # flight_delay, flight_cancellation, missed_connection, severe_weather
-    severity: str = "warning"  # info, warning, critical
-    flight_number: Optional[str] = None
-    delay_minutes: int = 0
-    details: Dict[str, Any] = Field(default_factory=dict)
+    current_itinerary: dict[str, Any] = field(default_factory=dict)
+    disruption: dict[str, Any] = field(default_factory=dict)
 
+    candidate_flights: list[dict[str, Any]] = field(default_factory=list)
 
-class AgentState(BaseModel):
-    """Runtime state of the autonomous travel concierge and guardian."""
+    selected_flight: dict[str, Any] | None = None
 
-    session_id: str
-    user_id: Optional[str] = None
-    current_trip_id: Optional[str] = None
-    messages: List[Dict[str, Any]] = Field(default_factory=list)
-    active_disruptions: List[DisruptionEvent] = Field(default_factory=list)
-    recommended_itinerary_updates: List[Dict[str, Any]] = Field(default_factory=list)
-    context_data: Dict[str, Any] = Field(default_factory=dict)
+    action: str | None = None
+    status: str = "started"
+
+    messages: list[dict[str, Any]] = field(default_factory=list)

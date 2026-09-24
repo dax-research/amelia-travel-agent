@@ -1,46 +1,50 @@
-"""Flight lookup and status tools for LangChain agent."""
-
-import json
-from langchain_core.tools import tool
+from typing import Any
 
 
-@tool
-def search_flights(origin: str, destination: str, departure_date: str) -> str:
-    """Search for flight options between origin and destination airport codes on a specific date (YYYY-MM-DD)."""
-    offers = [
+def search_flights(
+    origin: str,
+    destination: str,
+) -> list[dict[str, Any]]:
+    """
+    Search available flights between two airports.
+
+    This is currently mock data.
+    Later this tool will call the Duffel integration.
+    """
+
+    flights = [
         {
-            "flight_id": f"FL_{origin.upper()}_{destination.upper()}_101",
-            "airline": "Skyward Global",
-            "origin": origin.upper(),
-            "destination": destination.upper(),
-            "departure_time": f"{departure_date} 08:30",
-            "arrival_time": f"{departure_date} 11:45",
-            "price_usd": 380.0,
-            "non_stop": True,
+            "flight_number": "AI101",
+            "origin": "AMD",
+            "destination": "DEL",
+            "departure": "08:00",
+            "arrival": "09:30",
+            "price": 6500,
+            "stops": 0,
         },
         {
-            "flight_id": f"FL_{origin.upper()}_{destination.upper()}_204",
-            "airline": "AeroWings",
-            "origin": origin.upper(),
-            "destination": destination.upper(),
-            "departure_time": f"{departure_date} 14:00",
-            "arrival_time": f"{departure_date} 17:15",
-            "price_usd": 320.0,
-            "non_stop": True,
+            "flight_number": "AI205",
+            "origin": "AMD",
+            "destination": "DEL",
+            "departure": "11:00",
+            "arrival": "12:30",
+            "price": 5200,
+            "stops": 0,
+        },
+        {
+            "flight_number": "6E312",
+            "origin": "AMD",
+            "destination": "DEL",
+            "departure": "15:00",
+            "arrival": "16:40",
+            "price": 4800,
+            "stops": 0,
         },
     ]
-    return json.dumps(offers)
 
-
-@tool
-def check_flight_status(flight_number: str) -> str:
-    """Check real-time flight status, delay information, and terminal gate for a flight number."""
-    status = {
-        "flight_number": flight_number.upper(),
-        "status": "on_time",
-        "delay_minutes": 0,
-        "terminal": "T2",
-        "gate": "B22",
-        "advisory": "Flight operating on schedule.",
-    }
-    return json.dumps(status)
+    return [
+        flight
+        for flight in flights
+        if flight["origin"] == origin
+        and flight["destination"] == destination
+    ]
